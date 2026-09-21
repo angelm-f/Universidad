@@ -1,0 +1,2 @@
+SELECT codigo, nombre, categoria, precio, stock
+FROM producto;

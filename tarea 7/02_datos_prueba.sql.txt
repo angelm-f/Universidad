@@ -1,0 +1,11 @@
+INSERT INTO producto
+(codigo, nombre, categoria, precio, stock)
+VALUES
+('TEC-001', 'Teclado Logitech', 'Tecnologia', 150.00, 10),
+('TEC-002', 'Mouse Logitech', 'Tecnologia', 85.00, 5),
+('TEC-003', 'Audifonos Sony', 'Tecnologia', 250.00, 2),
+('HOG-001', 'Taza ceramica', 'Hogar', 35.00, 8),
+('HOG-002', 'Lampara LED', 'Hogar', 120.00, 0),
+('DEP-001', 'Balon de futbol', 'Deportes', 175.00, 3),
+('DEP-002', 'Guantes deportivos', 'Deportes', 95.00, 12),
+('LIB-001', 'Cuaderno universitario', 'Papeleria', 25.00, 20);
