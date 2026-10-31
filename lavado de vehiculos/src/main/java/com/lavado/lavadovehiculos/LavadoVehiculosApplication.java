@@ -1,0 +1,13 @@
+package com.lavado.lavadovehiculos;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LavadoVehiculosApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(LavadoVehiculosApplication.class, args);
+	}
+
+}

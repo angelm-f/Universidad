@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoBrillo | Gestión de lavado</title>
+
+    <style>
+        :root {
+            --fondo: #f3f6fb;
+            --blanco: #ffffff;
+            --texto: #172033;
+            --secundario: #64748b;
+            --azul: #2457d6;
+            --azul-oscuro: #173da3;
+            --borde: #e2e8f0;
+            --verde: #15803d;
+            --rojo: #b91c1c;
+            --sombra: 0 8px 25px rgba(15, 23, 42, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--fondo);
+            color: var(--texto);
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button:disabled, select:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .encabezado {
+            background: #142b50;
+            color: white;
+            padding: 23px 5%;
+        }
+
+        .encabezado-contenido {
+            max-width: 1400px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .marca {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .logo {
+            width: 47px;
+            height: 47px;
+            border-radius: 14px;
+            background: #2861e8;
+            display: grid;
+            place-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .marca h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .marca p {
+            margin: 5px 0 0;
+            color: #cbd5e1;
+        }
+
+        .indicador {
+            border: 1px solid #405675;
+            background: #203c64;
+            border-radius: 30px;
+            padding: 9px 14px;
+            color: #dbeafe;
+        }
+
+        main {
+            max-width: 1400px;
+            padding: 28px 5% 45px;
+            margin: auto;
+        }
+
+        .bienvenida {
+            margin-bottom: 24px;
+        }
+
+        .bienvenida h2 {
+            font-size: 25px;
+            margin: 0 0 7px;
+        }
+
+        .bienvenida p {
+            margin: 0;
+            color: var(--secundario);
+        }
+
+        .estadisticas {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 17px;
+            margin-bottom: 25px;
+        }
+
+        .tarjeta-estadistica {
+            background: var(--blanco);
+            border: 1px solid var(--borde);
+            border-radius: 15px;
+            padding: 21px;
+            box-shadow: var(--sombra);
+        }
+
+        .estadistica-titulo {
+            color: var(--secundario);
+            font-size: 13px;
+            margin-bottom: 13px;
+        }
+
+        .estadistica-valor {
+            font-size: 28px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .estadistica-nota {
+            color: var(--secundario);
+            font-size: 12px;
+            margin-top: 7px;
+        }
+
+        .panel {
+            background: var(--blanco);
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 23px;
+            box-shadow: var(--sombra);
+            min-width: 0;
+        }
+
+        .panel-cabecera {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .panel-cabecera h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .panel-cabecera p {
+            margin: 6px 0 0;
+            color: var(--secundario);
+            font-size: 13px;
+        }
+
+        .servicios {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .servicio {
+            border: 1px solid var(--borde);
+            border-radius: 13px;
+            padding: 18px;
+            background: #fbfdff;
+        }
+
+        .servicio-icono {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            background: #e8efff;
+            color: var(--azul);
+            border-radius: 12px;
+            font-size: 21px;
+            margin-bottom: 13px;
+        }
+
+        .servicio h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .servicio p {
+            margin: 0;
+            color: var(--secundario);
+            line-height: 1.5;
+            min-height: 40px;
+        }
+
+        .precio-servicio {
+            color: var(--azul);
+            font-size: 22px;
+            font-weight: 750;
+            margin-top: 15px;
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .campo label {
+            font-weight: 650;
+        }
+
+        .campo input,
+        .campo select,
+        .filtro {
+            width: 100%;
+            min-width: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            padding: 11px 12px;
+            background: white;
+            color: var(--texto);
+            outline: none;
+        }
+
+        .campo input:focus,
+        .campo select:focus,
+        .filtro:focus {
+            border-color: var(--azul);
+            box-shadow: 0 0 0 3px rgba(36, 87, 214, 0.12);
+        }
+
+        .ayuda {
+            font-size: 12px;
+            color: var(--secundario);
+        }
+
+        .resumen-precio {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            grid-column: 1 / -1;
+        }
+
+        .resumen-precio span {
+            color: #334155;
+        }
+
+        .resumen-precio strong {
+            font-size: 23px;
+            color: var(--azul);
+        }
+
+        .acciones-formulario {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .boton {
+            border: 0;
+            border-radius: 9px;
+            padding: 11px 16px;
+            font-weight: 650;
+            transition: background 0.15s;
+        }
+
+        .boton-primario {
+            background: var(--azul);
+            color: white;
+        }
+
+        .boton-primario:hover {
+            background: var(--azul-oscuro);
+        }
+
+        .boton-secundario {
+            background: #e9eef7;
+            color: #26354d;
+        }
+
+        .boton-secundario:hover {
+            background: #dce5f3;
+        }
+
+        .boton:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .filtros {
+            display: grid;
+            grid-template-columns: minmax(200px, 1fr) minmax(180px, 240px);
+            gap: 12px;
+            width: min(100%, 580px);
+        }
+
+        .tabla-contenedor {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--borde);
+            border-radius: 11px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+            text-align: left;
+        }
+
+        thead {
+            background: #f1f5f9;
+        }
+
+        th {
+            color: #475569;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.035em;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 14px 15px;
+            border-bottom: 1px solid var(--borde);
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        tbody tr:hover {
+            background: #fafcff;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .estado-recibida {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .estado-en_proceso {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .estado-lista {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .estado-entregada {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .estadoOrden {
+            min-width: 160px;
+            padding: 9px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: var(--texto);
+            margin-right: 7px;
+            margin-bottom: 5px;
+        }
+
+        .btnEstado {
+            padding: 9px 11px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--azul);
+            color: white;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .btnEstado:hover {
+            background: var(--azul-oscuro);
+        }
+
+        .btnEstado:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .acciones-celda {
+            min-width: 290px;
+        }
+
+        .vacio {
+            text-align: center;
+            color: var(--secundario);
+            padding: 25px;
+        }
+
+        .mensaje {
+            display: none;
+            padding: 13px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow-wrap: anywhere;
+            line-height: 1.5;
+        }
+
+        .mensaje.visible {
+            display: block;
+        }
+
+        .mensaje.exito {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .mensaje.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .mensaje.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .pie {
+            background: #142b50;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 22px;
+        }
+
+        @media (max-width: 900px) {
+            .estadisticas {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .servicios {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            main {
+                padding: 20px 4% 35px;
+            }
+
+            .panel {
+                padding: 17px;
+            }
+
+            .estadisticas,
+            .servicios,
+            .formulario,
+            .filtros {
+                grid-template-columns: 1fr;
+            }
+
+            .resumen-precio {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .marca h1 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="encabezado">
+        <div class="encabezado-contenido">
+            <div class="marca">
+                <div class="logo">A</div>
+                <div>
+                    <h1>AutoBrillo</h1>
+                    <p>Sistema de gestión de lavado vehicular</p>
+                </div>
+            </div>
+            <div class="indicador">Panel de administración</div>
+        </div>
+    </header>
+
+    <main>
+        <section class="bienvenida">
+            <h2>Panel de control</h2>
+            <p>Administra servicios, registra vehículos y controla cada orden de lavado.</p>
+        </section>
+
+        <div id="mensaje" class="mensaje" role="status" aria-live="polite"></div>
+
+        <section class="estadisticas">
+            <article class="tarjeta-estadistica">
+                <div class="estadistica-titulo">Órdenes registradas</div>
+                <div class="estadistica-valor" id="totalOrdenes">0</div>
+                <div class="estadistica-nota">Total de órdenes almacenadas</div>
+            </article>
+
+            <article class="tarjeta-estadistica">
+                <div class="estadistica-titulo">En proceso</div>
+                <div class="estadistica-valor" id="ordenesProceso">0</div>
+                <div class="estadistica-nota">Vehículos que están siendo atendidos</div>
+            </article>
+
+            <article class="tarjeta-estadistica">
+                <div class="estadistica-titulo">Pendientes de entrega</div>
+                <div class="estadistica-valor" id="ordenesPendientes">0</div>
+                <div class="estadistica-nota">Órdenes aún no entregadas</div>
+            </article>
+
+            <article class="tarjeta-estadistica">
+                <div class="estadistica-titulo">Valor de órdenes del día</div>
+                <div class="estadistica-valor" id="valorDia">Q0.00</div>
+                <div class="estadistica-nota">Valor registrado, no necesariamente cobrado</div>
+            </article>
+        </section>
+
+        <section class="panel">
+            <div class="panel-cabecera">
+                <div>
+                    <h2>Catálogo de servicios</h2>
+                    <p>Servicios activos disponibles para registrar una orden.</p>
+                </div>
+            </div>
+            <div id="catalogoServicios" class="servicios">
+                <p>Cargando servicios...</p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-cabecera">
+                <div>
+                    <h2>Registrar orden de lavado</h2>
+                    <p>Ingresa los datos del cliente, vehículo y servicio solicitado.</p>
+                </div>
+            </div>
+
+            <form id="formularioOrden" class="formulario">
+                <div class="campo">
+                    <label for="placa">Placa del vehículo</label>
+                    <input id="placa" name="placa" type="text"
+                           placeholder="Ej. P456XYZ" maxlength="20" required>
+                </div>
+
+                <div class="campo">
+                    <label for="propietario">Nombre del propietario</label>
+                    <input id="propietario" name="propietario" type="text"
+                           placeholder="Nombre completo" maxlength="120" required>
+                </div>
+
+                <div class="campo">
+                    <label for="tipoVehiculo">Tipo de vehículo</label>
+                    <select id="tipoVehiculo" name="tipoVehiculo" required>
+                        <option value="">Selecciona un tipo</option>
+                        <option value="AUTOMOVIL">Automóvil</option>
+                        <option value="MOTOCICLETA">Motocicleta</option>
+                        <option value="CAMIONETA">Camioneta</option>
+                        <option value="OTRO">Otro</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="servicioId">Servicio solicitado</label>
+                    <select id="servicioId" name="servicioId" required>
+                        <option value="">Cargando servicios...</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="recargo">Recargo adicional (Q)</label>
+                    <input id="recargo" name="recargo" type="number"
+                           min="0" step="0.01" value="0" required>
+                    <span class="ayuda">Si no existe recargo, deja el valor en cero.</span>
+                </div>
+
+                <div class="campo">
+                    <label>Estado inicial</label>
+                    <input type="text" value="Recibida" readonly>
+                    <span class="ayuda">Toda nueva orden comienza como recibida.</span>
+                </div>
+
+                <div class="resumen-precio">
+                    <span>Total estimado de la orden</span>
+                    <strong id="totalEstimado">Q0.00</strong>
+                </div>
+
+                <div class="acciones-formulario">
+                    <button id="btnRegistrar" class="boton boton-primario" type="submit">
+                        Registrar orden
+                    </button>
+                    <button class="boton boton-secundario" type="reset">
+                        Limpiar formulario
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="panel-cabecera">
+                <div>
+                    <h2>Gestión de órdenes</h2>
+                    <p>Consulta las órdenes y actualiza su estado de atención.</p>
+                </div>
+                <button id="btnActualizar" class="boton boton-secundario" type="button">
+                    Actualizar datos
+                </button>
+            </div>
+
+            <div class="filtros" style="margin-bottom: 18px;">
+                <input id="buscarOrden" class="filtro" type="search"
+                       placeholder="Buscar por placa o propietario..."
+                       aria-label="Buscar por placa o propietario">
+
+                <select id="filtroEstado" class="filtro" aria-label="Filtrar por estado">
+                    <option value="">Todos los estados</option>
+                    <option value="RECIBIDA">Recibida</option>
+                    <option value="EN_PROCESO">En proceso</option>
+                    <option value="LISTA">Lista</option>
+                    <option value="ENTREGADA">Entregada</option>
+                </select>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Propietario</th>
+                            <th>Servicio</th>
+                            <th>Estado actual</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaOrdenes">
+                        <tr>
+                            <td colspan="6" class="vacio">Cargando órdenes...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-cabecera">
+                <div>
+                    <h2>Vehículos pendientes</h2>
+                    <p>Órdenes que todavía no han sido entregadas.</p>
+                </div>
+            </div>
+            <div id="listaPendientes">
+                <p>Cargando información...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="pie">
+        AutoBrillo · Sistema de gestión de lavado vehicular
+    </footer>
+
+    <script>
+        "use strict";
+
+        const API_ORDENES = "/api/ordenes";
+        const API_SERVICIOS = "/api/servicios";
+
+        const formularioOrden = document.getElementById("formularioOrden");
+        const placaInput = document.getElementById("placa");
+        const propietarioInput = document.getElementById("propietario");
+        const tipoVehiculoInput = document.getElementById("tipoVehiculo");
+        const servicioInput = document.getElementById("servicioId");
+        const recargoInput = document.getElementById("recargo");
+
+        const catalogoServicios = document.getElementById("catalogoServicios");
+        const tablaOrdenes = document.getElementById("tablaOrdenes");
+        const buscarOrden = document.getElementById("buscarOrden");
+        const filtroEstado = document.getElementById("filtroEstado");
+        const mensaje = document.getElementById("mensaje");
+
+        let serviciosCargados = [];
+        let ordenesCargadas = [];
+
+        function formatoPrecio(valor) {
+            const numero = Number(valor ?? 0);
+            return (Number.isFinite(numero) ? numero : 0).toFixed(2);
+        }
+
+        function formatoQuetzales(valor) {
+            return "Q" + formatoPrecio(valor);
+        }
+
+        function obtenerNombreEstado(estado) {
+            const nombres = {
+                RECIBIDA: "Recibida",
+                EN_PROCESO: "En proceso",
+                LISTA: "Lista",
+                ENTREGADA: "Entregada"
+            };
+
+            return nombres[estado] || estado || "Sin estado";
+        }
+
+        function mostrarMensaje(texto, tipo = "info") {
+            mensaje.textContent = texto;
+            mensaje.className = "mensaje visible " + tipo;
+        }
+
+        function ocultarMensaje() {
+            mensaje.textContent = "";
+            mensaje.className = "mensaje";
+        }
+
+        async function solicitar(url, opciones = {}) {
+            const respuesta = await fetch(url, opciones);
+
+            if (!respuesta.ok) {
+                let detalle = "";
+
+                try {
+                    detalle = await respuesta.text();
+                } catch (error) {
+                    detalle = "";
+                }
+
+                throw new Error(
+                    detalle || "La solicitud falló. Código HTTP: " + respuesta.status
+                );
+            }
+
+            if (respuesta.status === 204) {
+                return null;
+            }
+
+            const texto = await respuesta.text();
+            return texto ? JSON.parse(texto) : null;
+        }
+
+        function crearCelda(valor) {
+            const celda = document.createElement("td");
+            celda.textContent = valor ?? "";
+            return celda;
+        }
+
+        function obtenerPrecioServicio(id) {
+            const servicio = serviciosCargados.find(
+                item => String(item.id) === String(id)
+            );
+
+            return servicio ? Number(servicio.precio || 0) : 0;
+        }
+
+        function actualizarTotalEstimado() {
+            const precio = obtenerPrecioServicio(servicioInput.value);
+            const recargo = Number(recargoInput.value || 0);
+            const total = precio + (Number.isFinite(recargo) ? recargo : 0);
+
+            document.getElementById("totalEstimado").textContent =
+                formatoQuetzales(total);
+        }
+
+        async function cargarServicios() {
+            try {
+                const datos = await solicitar(API_SERVICIOS + "/activos");
+                serviciosCargados = Array.isArray(datos) ? datos : [];
+
+                catalogoServicios.replaceChildren();
+                servicioInput.replaceChildren();
+
+                if (serviciosCargados.length === 0) {
+                    catalogoServicios.textContent =
+                        "No hay servicios activos disponibles.";
+
+                    const opcion = document.createElement("option");
+                    opcion.value = "";
+                    opcion.textContent = "No hay servicios disponibles";
+                    servicioInput.appendChild(opcion);
+
+                    actualizarTotalEstimado();
+                    return;
+                }
+
+                const opcionInicial = document.createElement("option");
+                opcionInicial.value = "";
+                opcionInicial.textContent = "Selecciona un servicio";
+                servicioInput.appendChild(opcionInicial);
+
+                serviciosCargados.forEach(servicio => {
+                    const tarjeta = document.createElement("article");
+                    tarjeta.className = "servicio";
+
+                    const icono = document.createElement("div");
+                    icono.className = "servicio-icono";
+                    icono.textContent = "✦";
+
+                    const nombre = document.createElement("h3");
+                    nombre.textContent = servicio.nombre || "Servicio";
+
+                    const descripcion = document.createElement("p");
+                    descripcion.textContent =
+                        servicio.descripcion || "Servicio de lavado vehicular.";
+
+                    const precio = document.createElement("div");
+                    precio.className = "precio-servicio";
+                    precio.textContent = formatoQuetzales(servicio.precio);
+
+                    tarjeta.append(icono, nombre, descripcion, precio);
+                    catalogoServicios.appendChild(tarjeta);
+
+                    const opcion = document.createElement("option");
+                    opcion.value = servicio.id;
+                    opcion.textContent =
+                        servicio.nombre + " — " +
+                        formatoQuetzales(servicio.precio);
+
+                    servicioInput.appendChild(opcion);
+                });
+
+                actualizarTotalEstimado();
+            } catch (error) {
+                catalogoServicios.textContent =
+                    "No fue posible cargar los servicios.";
+
+                mostrarMensaje(
+                    "Error al cargar servicios: " + error.message,
+                    "error"
+                );
+            }
+        }
+
+        async function cargarOrdenes() {
+            try {
+                const datos = await solicitar(API_ORDENES);
+                ordenesCargadas = Array.isArray(datos) ? datos : [];
+
+                renderizarOrdenes();
+                actualizarResumen();
+                actualizarPendientes();
+            } catch (error) {
+                tablaOrdenes.replaceChildren();
+
+                const fila = document.createElement("tr");
+                const celda = document.createElement("td");
+
+                celda.colSpan = 6;
+                celda.className = "vacio";
+                celda.textContent = "No fue posible cargar las órdenes.";
+
+                fila.appendChild(celda);
+                tablaOrdenes.appendChild(fila);
+
+                mostrarMensaje(
+                    "Error al cargar las órdenes: " + error.message,
+                    "error"
+                );
+            }
+        }
+
+        function renderizarOrdenes() {
+    tablaOrdenes.replaceChildren();
+
+    const termino = buscarOrden.value.trim().toLocaleLowerCase();
+    const estadoSeleccionado = filtroEstado.value;
+
+    const filtradas = ordenesCargadas.filter(orden => {
+        const coincideTexto =
+            String(orden.placa || "").toLocaleLowerCase().includes(termino) ||
+            String(orden.propietario || "").toLocaleLowerCase().includes(termino);
+
+        const coincideEstado =
+            !estadoSeleccionado || orden.estado === estadoSeleccionado;
+
+        return coincideTexto && coincideEstado;
+    });
+
+    if (filtradas.length === 0) {
+        const fila = document.createElement("tr");
+        const celda = document.createElement("td");
+
+        celda.colSpan = 6;
+        celda.className = "vacio";
+        celda.textContent = "No se encontraron órdenes.";
+
+        fila.appendChild(celda);
+        tablaOrdenes.appendChild(fila);
+        return;
+    }
+
+    filtradas.forEach(orden => {
+        const fila = document.createElement("tr");
+
+        fila.appendChild(crearCelda(orden.placa));
+        fila.appendChild(crearCelda(orden.propietario));
+        fila.appendChild(
+            crearCelda(orden.servicio?.nombre || "Sin servicio")
+        );
+
+        const celdaEstado = document.createElement("td");
+        const etiqueta = document.createElement("span");
+
+        etiqueta.className =
+            "estado estado-" + String(orden.estado || "").toLocaleLowerCase();
+
+        etiqueta.textContent = obtenerNombreEstado(orden.estado);
+        celdaEstado.appendChild(etiqueta);
+        fila.appendChild(celdaEstado);
+
+        fila.appendChild(crearCelda(formatoQuetzales(orden.total)));
+
+        const celdaAcciones = document.createElement("td");
+        celdaAcciones.className = "acciones-celda";
+
+        // Selector para avanzar al siguiente estado.
+        const selector = document.createElement("select");
+        selector.className = "estadoOrden";
+        selector.dataset.id = orden.id;
+        selector.setAttribute(
+            "aria-label",
+            "Nuevo estado de la orden " + orden.id
+        );
+
+        const siguienteEstado = {
+            RECIBIDA: ["EN_PROCESO", "En proceso"],
+            EN_PROCESO: ["LISTA", "Lista"],
+            LISTA: ["ENTREGADA", "Entregada"],
+            ENTREGADA: null
+        };
+
+        const estadoActual = orden.estado;
+        const siguiente = siguienteEstado[estadoActual];
+
+        const opcionActual = document.createElement("option");
+        opcionActual.value = estadoActual;
+        opcionActual.textContent =
+            "Estado actual: " + obtenerNombreEstado(estadoActual);
+        opcionActual.selected = true;
+        selector.appendChild(opcionActual);
+
+        if (siguiente) {
+            const opcionSiguiente = document.createElement("option");
+            opcionSiguiente.value = siguiente[0];
+            opcionSiguiente.textContent = "Avanzar a: " + siguiente[1];
+            selector.appendChild(opcionSiguiente);
+        } else {
+            selector.disabled = true;
+        }
+
+        // Botón para guardar el cambio de estado.
+        const botonEstado = document.createElement("button");
+        botonEstado.type = "button";
+        botonEstado.className = "btnEstado";
+        botonEstado.dataset.id = orden.id;
+        botonEstado.textContent = "Guardar estado";
+
+        if (orden.estado === "ENTREGADA") {
+            botonEstado.disabled = true;
+            botonEstado.title = "La orden ya está entregada.";
+        }
+
+        // Botón para editar la orden.
+        const botonEditar = document.createElement("button");
+        botonEditar.type = "button";
+        botonEditar.className = "btnEditar";
+        botonEditar.dataset.id = orden.id;
+        botonEditar.textContent = "Editar";
+        botonEditar.style.cssText =
+            "padding:9px 11px;border:0;border-radius:8px;" +
+            "background:#dbeafe;color:#1e40af;font-weight:650;" +
+            "margin:5px 5px 5px 0;";
+
+        // Botón para eliminar la orden.
+        const botonEliminar = document.createElement("button");
+        botonEliminar.type = "button";
+        botonEliminar.className = "btnEliminar";
+        botonEliminar.dataset.id = orden.id;
+        botonEliminar.textContent = "Eliminar";
+        botonEliminar.style.cssText =
+            "padding:9px 11px;border:0;border-radius:8px;" +
+            "background:#fee2e2;color:#991b1b;font-weight:650;" +
+            "margin:5px 5px 5px 0;";
+
+        celdaAcciones.append(
+            selector,
+            botonEstado,
+            document.createElement("br"),
+            botonEditar,
+            botonEliminar
+        );
+
+        fila.appendChild(celdaAcciones);
+        tablaOrdenes.appendChild(fila);
+    });
+}
+
+        function actualizarResumen() {
+            document.getElementById("totalOrdenes").textContent =
+                ordenesCargadas.length;
+
+            document.getElementById("ordenesProceso").textContent =
+                ordenesCargadas.filter(
+                    orden => orden.estado === "EN_PROCESO"
+                ).length;
+
+            document.getElementById("ordenesPendientes").textContent =
+                ordenesCargadas.filter(
+                    orden => orden.estado !== "ENTREGADA"
+                ).length;
+
+            const hoy = new Date();
+            const fechaHoy =
+                hoy.getFullYear() + "-" +
+                String(hoy.getMonth() + 1).padStart(2, "0") + "-" +
+                String(hoy.getDate()).padStart(2, "0");
+
+            const totalDia = ordenesCargadas.reduce((suma, orden) => {
+                if (!orden.fecha) {
+                    return suma;
+                }
+
+                const fechaOrden = String(orden.fecha).slice(0, 10);
+
+                if (fechaOrden === fechaHoy) {
+                    return suma + Number(orden.total || 0);
+                }
+
+                return suma;
+            }, 0);
+
+            document.getElementById("valorDia").textContent =
+                formatoQuetzales(totalDia);
+        }
+
+        function actualizarPendientes() {
+            const contenedor = document.getElementById("listaPendientes");
+            contenedor.replaceChildren();
+
+            const pendientes = ordenesCargadas.filter(
+                orden => orden.estado !== "ENTREGADA"
+            );
+
+            if (pendientes.length === 0) {
+                const texto = document.createElement("p");
+                texto.textContent = "No hay vehículos pendientes de entrega.";
+                contenedor.appendChild(texto);
+                return;
+            }
+
+            const lista = document.createElement("div");
+            lista.style.display = "grid";
+            lista.style.gap = "10px";
+
+            pendientes.forEach(orden => {
+                const elemento = document.createElement("div");
+
+                elemento.style.display = "flex";
+                elemento.style.justifyContent = "space-between";
+                elemento.style.alignItems = "center";
+                elemento.style.gap = "12px";
+                elemento.style.flexWrap = "wrap";
+                elemento.style.padding = "13px";
+                elemento.style.border = "1px solid #e2e8f0";
+                elemento.style.borderRadius = "10px";
+
+                const descripcion = document.createElement("div");
+
+                const placa = document.createElement("strong");
+                placa.textContent = orden.placa || "Sin placa";
+
+                const propietario = document.createElement("div");
+                propietario.style.color = "#64748b";
+                propietario.style.marginTop = "4px";
+                propietario.textContent =
+                    orden.propietario || "Sin propietario";
+
+                descripcion.append(placa, propietario);
+
+                const estado = document.createElement("span");
+                estado.className =
+                    "estado estado-" +
+                    String(orden.estado || "").toLocaleLowerCase();
+                estado.textContent = obtenerNombreEstado(orden.estado);
+
+                elemento.append(descripcion, estado);
+                lista.appendChild(elemento);
+            });
+
+            contenedor.appendChild(lista);
+        }
+
+        formularioOrden.addEventListener("submit", async evento => {
+            evento.preventDefault();
+            ocultarMensaje();
+
+            const servicioId = servicioInput.value;
+            const recargo = Number(recargoInput.value);
+
+            if (!servicioId) {
+                mostrarMensaje(
+                    "Selecciona un servicio antes de continuar.",
+                    "error"
+                );
+                return;
+            }
+
+            if (!Number.isFinite(recargo) || recargo < 0) {
+                mostrarMensaje(
+                    "El recargo debe ser un número igual o mayor que cero.",
+                    "error"
+                );
+                return;
+            }
+
+            const boton = document.getElementById("btnRegistrar");
+            boton.disabled = true;
+            boton.textContent = "Registrando...";
+
+            const datos = {
+                placa: placaInput.value.trim().toUpperCase(),
+                propietario: propietarioInput.value.trim(),
+                tipoVehiculo: tipoVehiculoInput.value,
+                servicioId: Number(servicioId),
+                recargo: recargo
+            };
+
+            try {
+                await solicitar(API_ORDENES, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(datos)
+                });
+
+                formularioOrden.reset();
+                recargoInput.value = "0";
+                actualizarTotalEstimado();
+
+                await cargarOrdenes();
+
+                mostrarMensaje(
+                    "La orden se registró correctamente.",
+                    "exito"
+                );
+            } catch (error) {
+                mostrarMensaje(
+                    "No fue posible registrar la orden: " + error.message,
+                    "error"
+                );
+            } finally {
+                boton.disabled = false;
+                boton.textContent = "Registrar orden";
+            }
+        });
+
+        tablaOrdenes.addEventListener("click", async evento => {
+    const boton = evento.target.closest(
+        ".btnEstado, .btnEditar, .btnEliminar"
+    );
+
+    if (!boton || boton.disabled) {
+        return;
+    }
+
+    const id = boton.dataset.id;
+
+    if (!id) {
+        mostrarMensaje("No fue posible identificar la orden.", "error");
+        return;
+    }
+
+    const orden = ordenesCargadas.find(
+        item => String(item.id) === String(id)
+    );
+
+    if (!orden) {
+        mostrarMensaje("No se encontró la orden seleccionada.", "error");
+        return;
+    }
+
+    // EDITAR ORDEN
+    if (boton.classList.contains("btnEditar")) {
+        const placa = prompt("Placa del vehículo:", orden.placa || "");
+
+        if (placa === null) return;
+
+        const propietario = prompt(
+            "Nombre del propietario:",
+            orden.propietario || ""
+        );
+
+        if (propietario === null) return;
+
+        const tiposVehiculo = [
+            "AUTOMOVIL",
+            "MOTOCICLETA",
+            "CAMIONETA",
+            "OTRO"
+        ];
+
+        const tipoActual = String(orden.tipoVehiculo || "AUTOMOVIL")
+            .toUpperCase();
+
+        const tipoVehiculo = prompt(
+            "Tipo de vehículo (AUTOMOVIL, MOTOCICLETA, CAMIONETA u OTRO):",
+            tiposVehiculo.includes(tipoActual) ? tipoActual : "AUTOMOVIL"
+        );
+
+        if (tipoVehiculo === null) return;
+
+        const servicioActual = orden.servicioId ?? orden.servicio?.id ?? "";
+
+        const servicioId = prompt(
+            "ID del servicio:\n" +
+            serviciosCargados.map(servicio =>
+                servicio.id + " - " + servicio.nombre +
+                " (" + formatoQuetzales(servicio.precio) + ")"
+            ).join("\n"),
+            String(servicioActual)
+        );
+
+        if (servicioId === null) return;
+
+        const recargoActual = orden.recargo ?? 0;
+        const recargoTexto = prompt(
+            "Recargo adicional en quetzales:",
+            String(recargoActual)
+        );
+
+        if (recargoTexto === null) return;
+
+        const recargo = Number(recargoTexto);
+        const tipoNormalizado = tipoVehiculo.trim().toUpperCase();
+        const servicioSeleccionado = serviciosCargados.find(
+            servicio => String(servicio.id) === servicioId.trim()
+        );
+
+        if (!placa.trim() || !propietario.trim()) {
+            mostrarMensaje(
+                "La placa y el nombre del propietario son obligatorios.",
+                "error"
+            );
+            return;
+        }
+
+        if (!tiposVehiculo.includes(tipoNormalizado)) {
+            mostrarMensaje(
+                "El tipo de vehículo no es válido. Usa uno de los tipos indicados.",
+                "error"
+            );
+            return;
+        }
+
+        if (!servicioSeleccionado) {
+            mostrarMensaje(
+                "El ID del servicio no es válido o el servicio no está disponible.",
+                "error"
+            );
+            return;
+        }
+
+        if (
+            !Number.isFinite(recargo) ||
+            recargo < 0 ||
+            !/^\d+(\.\d{1,2})?$/.test(recargoTexto.trim())
+        ) {
+            mostrarMensaje(
+                "El recargo debe ser un número no negativo con máximo dos decimales.",
+                "error"
+            );
+            return;
+        }
+
+        const datosActualizados = {
+            placa: placa.trim().toUpperCase(),
+            propietario: propietario.trim(),
+            tipoVehiculo: tipoNormalizado,
+            servicioId: Number(servicioId),
+            recargo: recargo
+        };
+
+        boton.disabled = true;
+        boton.textContent = "Guardando...";
+
+        try {
+            await solicitar(API_ORDENES + "/" + encodeURIComponent(id), {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(datosActualizados)
+            });
+
+            await cargarOrdenes();
+
+            mostrarMensaje(
+                "La orden " + id + " se actualizó correctamente.",
+                "exito"
+            );
+        } catch (error) {
+            mostrarMensaje(
+                "No fue posible editar la orden: " + error.message,
+                "error"
+            );
+        } finally {
+            boton.disabled = false;
+            boton.textContent = "Editar";
+        }
+
+        return;
+    }
+
+    // ELIMINAR ORDEN
+    if (boton.classList.contains("btnEliminar")) {
+        const confirmar = confirm(
+            "¿Estás seguro de que deseas eliminar la orden " + id +
+            " correspondiente a la placa " + orden.placa + "?\n\n" +
+            "Esta acción no se puede deshacer."
+        );
+
+        if (!confirmar) return;
+
+        boton.disabled = true;
+        boton.textContent = "Eliminando...";
+
+        try {
+            await solicitar(
+                API_ORDENES + "/" + encodeURIComponent(id),
+                { method: "DELETE" }
+            );
+
+            await cargarOrdenes();
+
+            mostrarMensaje(
+                "La orden " + id + " se eliminó correctamente.",
+                "exito"
+            );
+        } catch (error) {
+            mostrarMensaje(
+                "No fue posible eliminar la orden: " + error.message,
+                "error"
+            );
+        } finally {
+            boton.disabled = false;
+            boton.textContent = "Eliminar";
+        }
+
+        return;
+    }
+
+    // CAMBIAR ESTADO: se conserva la lógica existente.
+    const fila = boton.closest("tr");
+    const selector = fila?.querySelector(".estadoOrden");
+
+    if (!selector) {
+        mostrarMensaje(
+            "No se encontró el selector de estado de la orden.",
+            "error"
+        );
+        return;
+    }
+
+    const nuevoEstado = selector.value;
+    const estadoAnterior = orden.estado;
+
+    if (nuevoEstado === estadoAnterior) {
+        mostrarMensaje("La orden ya tiene ese estado.", "info");
+        return;
+    }
+
+    const transicionesPermitidas = {
+        RECIBIDA: "EN_PROCESO",
+        EN_PROCESO: "LISTA",
+        LISTA: "ENTREGADA"
+    };
+
+    if (transicionesPermitidas[estadoAnterior] !== nuevoEstado) {
+        mostrarMensaje(
+            "Solo puedes avanzar al siguiente estado permitido.",
+            "error"
+        );
+        return;
+    }
+
+    boton.disabled = true;
+    selector.disabled = true;
+    boton.textContent = "Guardando...";
+
+    try {
+        const url = API_ORDENES + "/" +
+            encodeURIComponent(id) +
+            "/estado?estado=" + encodeURIComponent(nuevoEstado);
+
+        await solicitar(url, {
+            method: "PATCH"
+        });
+
+        await cargarOrdenes();
+
+        mostrarMensaje(
+            "El estado de la orden " + id + " se actualizó a " +
+            obtenerNombreEstado(nuevoEstado) + ".",
+            "exito"
+        );
+    } catch (error) {
+        boton.disabled = false;
+        selector.disabled = false;
+        boton.textContent = "Guardar estado";
+
+        mostrarMensaje(
+            "No fue posible actualizar el estado: " + error.message,
+            "error"
+        );
+    }
+});
+
+        buscarOrden.addEventListener("input", renderizarOrdenes);
+        filtroEstado.addEventListener("change", renderizarOrdenes);
+
+        servicioInput.addEventListener("change", actualizarTotalEstimado);
+        recargoInput.addEventListener("input", actualizarTotalEstimado);
+
+        formularioOrden.addEventListener("reset", () => {
+            setTimeout(actualizarTotalEstimado, 0);
+        });
+
+        document.getElementById("btnActualizar").addEventListener(
+            "click",
+            async () => {
+                ocultarMensaje();
+                await Promise.all([
+                    cargarServicios(),
+                    cargarOrdenes()
+                ]);
+            }
+        );
+
+        async function iniciarAplicacion() {
+            await Promise.all([
+                cargarServicios(),
+                cargarOrdenes()
+            ]);
+        }
+
+        iniciarAplicacion();
+    </script>
+</body>
+</html>
